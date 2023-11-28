@@ -1,13 +1,19 @@
 import { Prisma } from "@prisma/client";
 import { Context, Env } from "hono";
+import prisma from "../../config/database";
+import { ErrorFactory } from "../../config/error";
 import { AuthService } from "./service";
 
-type RegisterInput = Pick<Prisma.UserCreateInput, 'email' | 'password' | 'name' | 'phoneNumber'>
+type RegisterInput = Pick<
+  Prisma.UserCreateInput,
+  "email" | "password" | "name" | "phoneNumber"
+>;
 export class AuthController {
   private service: AuthService;
 
   constructor() {
-    this.service = new AuthService();
+    const errorFactory = new ErrorFactory();
+    this.service = new AuthService(prisma, errorFactory);
   }
 
   public async forgotPassowrd(c: Context): Promise<Response> {
